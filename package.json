@@ -1,0 +1,22 @@
+{
+  "name": "gulp_project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caihuan01/gulp_project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caihuan01/gulp_project/issues"
+  },
+  "homepage": "https://github.com/caihuan01/gulp_project#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2"
+  }
+}
