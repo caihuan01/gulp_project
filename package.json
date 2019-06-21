@@ -1,8 +1,7 @@
 {
   "name": "gulp_project",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,7 +15,19 @@
     "url": "https://github.com/caihuan01/gulp_project/issues"
   },
   "homepage": "https://github.com/caihuan01/gulp_project#readme",
+  "dependencies": {},
   "devDependencies": {
-    "gulp": "^4.0.2"
-  }
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^7.0.1",
+    "gulp-clean": "^0.4.0",
+    "gulp-clean-css": "^4.2.0",
+    "gulp-clean-dir": "^1.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.1",
+    "gulp-imagemin": "^6.0.0",
+    "gulp-uglify": "^3.0.2"
+  },
+  "description": ""
 }
