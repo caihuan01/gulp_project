@@ -1,4 +1,5 @@
 (function(){
+    var test1=123;
     var Dpr = 1, uAgent = window.navigator.userAgent;
     var isIOS = uAgent.match(/iphone/i);
     var isYIXIN = uAgent.match(/yixin/i);
@@ -43,3 +44,5 @@
     resizeRoot();
     //window.addEventListener('orientationchange', resizeRoot, false);
 }());  
+
+textDecorationStyle = 'initial'

@@ -1,3 +1,5 @@
+// https://blog.csdn.net/guang_s/article/details/84672449
+// https://www.jianshu.com/p/db49513a40ec
 let gulp = require('gulp');
 let concat = require('gulp-concat');
 let cleanCss = require('gulp-clean-css');
@@ -7,8 +9,29 @@ let babel = require('gulp-babel');
 let imagemin = require('gulp-imagemin'); //error
 let clean = require('gulp-clean');
 let browserSync = require('browser-sync').create();
+let reload = browserSync.reload;
 //gulp.watch()无法监听到新增加的文件
 let watch = require('gulp-watch');
+let fs = require('fs');
+
+
+
+var env ='dev';
+function set_env(type){
+    env = type || 'dev';
+    fs.writeFile('./env.js', 'export default '+env+';', function(err){
+        err && console.log(err);
+    })
+}
+
+function set_dev(done){
+    set_env('dev');
+    done();
+}
+function set_release(done){
+   set_env('release');
+    done();
+}
 
 gulp.task('css', function(){
 	return gulp.src('./src/css/*.css')
@@ -19,7 +42,6 @@ gulp.task('css', function(){
 })
 
 gulp.task('js_main', function(){
-    console.log('js_main')
 	return gulp.src('./src/js/*.js')
 			//.pipe(babel({presets: ['es2015']}))
             //.pipe(concat('main.min.js'))
@@ -29,8 +51,6 @@ gulp.task('js_main', function(){
 })
 
 gulp.task('html', function(){
-    console.log('zhixing')
-
     return gulp.src('./src/*.html')
             .pipe(gulp.dest('./dest/'))
 })
@@ -54,33 +74,63 @@ gulp.task('clean', function(){
             .pipe(clean())
 })
 
-gulp.task('browser', function(){
-     browserSync.init({
+/*gulp.task('server', function(){
+    browserSync.init({
         server: './dest'
-     })
+     });
 })
-
-gulp.task('watch', function(){
-    return watch('./src/*.html', function(e){
-        console.log('change')
-        gulp.task('html');
-        browserSync.reload();
+function server(){
+    browserSync.init({
+        server: './dest'
+    });
+}
+*/
+function server() {
+    browserSync.init({
+        port:9000,
+        server:{
+          baseDir: 'dest',
+          index:'index.html'
+        }
     })
-    // return (function(){
-    //     w('./src/**/*.html', 'html');
-    //     w('./src/js/*.js' , 'js_main');
-    //     w('./src/css/*.css', 'css');
-    //     w('./src/libs/*.js', 'js_lib');
-    //     w('./src/images/*.*', 'image');
-    // })();
+    console.log(set_env)
+    watch('./src/js/*.js', gulp.series('js_main', 'reload'))
+    watch('./src/*.html', gulp.series('html', 'reload'))   // 把监听写在服务里面，这里是复制html
+    function w(data){
+        var path = data.path, task = data.task;
+        watch(path, gulp.series(task, 'reload'))
+    }
 
-    // function w(path, stask){
-    //     console.log(stask)
-    //     watch(path, function(){
-    //         gulp.series(stask);
-    //         browserSync.reload();
-    //     })
-    // }
+
+    var wtask = [
+        {path: './src/js/*.js', task: 'js_main'},
+        {path: './src/*.html', task: 'html'},
+        {path: './src/lib/*.js', task: 'js_lib'},
+        {path: './src/css/*.css', task: 'css'}
+    ]
+    for(let i=0; i<wtask.length; i++){
+        w(wtask[i]);
+    }
+  
+}
+function set(){
+    console.log(1)
+}
+
+
+gulp.task('reload', function(){
+    return browserSync.reload();
 })
 
-gulp.task('default', gulp.series('clean', gulp.parallel('js_lib', 'js_main', 'image', 'css'), 'html', 'browser'))
+gulp.task('watch_js', function(){
+    return watch('./src/js/*.js', gulp.series('js_main', 'reload'))
+})
+
+gulp.task('watch_css', function(){
+    return watch('./src/css/*.css', gulp.series('css', 'reload'));
+})
+
+gulp.task('watch', gulp.parallel('watch_js', 'watch_css'));
+gulp.task('default', gulp.series('clean', gulp.parallel('js_lib', 'js_main', 'image', 'css'), 'html',server))
+
+gulp.task('dev', gulp.series(set_dev, 'clean', gulp.parallel('js_lib', 'js_main', 'image', 'css'), 'html',server));
